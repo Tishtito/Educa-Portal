@@ -3,6 +3,7 @@ import { GraduationCapIcon, LogOutIcon, WifiOffIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { navigation, type NavItem } from '@/app/navigation'
 import { useAuth } from '@/auth/useAuth'
+import { BottomNav } from '@/components/layout/BottomNav'
 import { ExamSwitcher } from '@/features/exams/ExamSwitcher'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import { useNativeBackButton } from '@/lib/native'
@@ -80,28 +81,11 @@ export function AppShell() {
           )}
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-4 pb-24 sm:px-6 sm:py-6 lg:pb-6 print:max-w-none print:p-0">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-4 pb-[calc(7rem+env(safe-area-inset-bottom))] sm:px-6 sm:py-6 lg:pb-6 print:max-w-none print:p-0">
           <Outlet />
         </main>
 
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden print:hidden">
-          <ul className="grid" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
-            {items.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    cn('flex flex-col items-center gap-0.5 py-2 text-[11px]', isActive ? 'font-medium text-primary' : 'text-muted-foreground')
-                  }
-                >
-                  <item.icon className="size-5" />
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <BottomNav items={items} className="lg:hidden" />
       </div>
     </div>
   )
