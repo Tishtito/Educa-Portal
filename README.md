@@ -48,6 +48,13 @@ Demo sign-in after seeding the API:
 Sign-in takes a username **or** an email address (`teacher@gatimu.educa.test`),
 and no school code: both are unique across every school.
 
+**Continue with Google** signs in an existing account whose email matches the
+Google account, and can also accept an invitation. It appears once
+`VITE_GOOGLE_WEB_CLIENT_ID` is set (see `.env.example`) and the API has the same
+client. Set-up, including the Android SHA-1 and the iOS URL scheme, is in
+`Educa_Lara/docs/authentication.md`. Sessions end after 90 days, or 30 days
+unused. The Account page lists signed-in devices and can sign them out.
+
 A user who is only an administrator is refused and pointed to Educa Admin. An
 administrator who is also a class teacher or examiner can sign in.
 

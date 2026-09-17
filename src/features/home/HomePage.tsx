@@ -15,7 +15,9 @@ import type { MyAssignments, MyExam } from '@/lib/api/types'
 import { formatDate } from '@/lib/format'
 
 export function HomePage() {
-  const { user, school, isClassTeacher, isExaminer } = useAuth()
+  const { user, school, can } = useAuth()
+  const isExaminer = can('enter_marks')
+  const isClassTeacher = can('view_class_pupils')
   const { exam, isPending, error, refetch } = useCurrentExam()
   const assignments = useMyAssignments()
   const duties = assignments.data && assignments.data.class_teacher_of.length + assignments.data.examiner_of.length

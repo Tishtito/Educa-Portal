@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChangePasswordForm } from '@/features/auth/ChangePasswordForm'
+import { SessionsCard } from '@/features/auth/SessionsCard'
 import { useMyAssignments } from '@/features/me/api'
 import { roleLabel } from '@/lib/format'
 
@@ -27,9 +28,9 @@ export function AccountPage() {
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="flex flex-wrap gap-1">
-              {user.roles.map((role) => (
+              {user.roles.map((role, i) => (
                 <Badge key={role} variant="secondary">
-                  {roleLabel(role)}
+                  {user.role_names?.[i] ?? roleLabel(role)}
                 </Badge>
               ))}
             </div>
@@ -85,6 +86,9 @@ export function AccountPage() {
             <ChangePasswordForm />
           </CardContent>
         </Card>
+        <div className="lg:col-span-2">
+          <SessionsCard />
+        </div>
       </div>
     </>
   )

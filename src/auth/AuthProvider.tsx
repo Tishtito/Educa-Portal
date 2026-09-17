@@ -4,7 +4,7 @@ import { api } from '@/lib/api/client'
 import { ApiError } from '@/lib/api/errors'
 import { session } from '@/lib/api/session'
 import type { LoginResponse, User } from '@/lib/api/types'
-import { AuthContext, DEVICE_NAME, hasStaffRole, NotStaffError, type AuthContextValue, type AuthStatus, type LoginInput } from './context'
+import { AuthContext, deviceFields, mayUsePortal, NotStaffError, type AuthContextValue, type AuthStatus, type LoginInput } from './context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadMe = useCallback(async () => {
     try {
       const me = await api.get<User>('/auth/me', { raw: true })
-      if (!hasStaffRole(me)) {
+      if (!mayUsePortal(me)) {
         await becomeGuest()
         return
       }
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /** Adopts a token the API has just issued (sign-in, invitation, password reset). */
   const signInWithToken = useCallback<AuthContextValue['signInWithToken']>(
     async (result) => {
-      if (!hasStaffRole(result.user)) {
+      if (!mayUsePortal(result.user)) {
         // Revoke the token we were just given rather than leave it live.
         await session.setToken(result.token)
         await api.post('/auth/logout', undefined, { raw: true }).catch(() => undefined)
@@ -83,14 +83,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async ({ identity, password }: LoginInput) => {
-      const result = await api.post<LoginResponse>('/auth/login', { identity, password, device_name: DEVICE_NAME }, { raw: true })
+      const result = await api.post<LoginResponse>('/auth/login', { identity, password, ...deviceFields() }, { raw: true })
+      return signInWithToken(result)
+    },
+    [signInWithToken],
+  )
+
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      const result = await api.post<LoginResponse>('/auth/google', { id_token: idToken, ...deviceFields() }, { raw: true })
       return signInWithToken(result)
     },
     [signInWithToken],
   )
 
   const logout = useCallback(async () => {
-    // Tokens never expire server-side, so always revoke.
+    // Revoke the session on the server, whatever happens here.
     await api.post('/auth/logout', undefined, { raw: true }).catch(() => undefined)
     await becomeGuest()
   }, [becomeGuest])
@@ -109,15 +117,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       school: user?.school ? { slug: user.school.slug, name: user.school.name } : null,
       mustChangePassword: user?.must_change_password ?? false,
-      isClassTeacher: user?.roles.includes('class_teacher') ?? false,
-      isExaminer: user?.roles.includes('examiner') ?? false,
+      can: (...permissions) => !!user && permissions.some((p) => user.permissions.includes(p)),
       login,
+      loginWithGoogle,
       signInWithToken,
       logout,
       refresh: loadMe,
       changePassword,
     }),
-    [status, user, login, signInWithToken, logout, loadMe, changePassword],
+    [status, user, login, loginWithGoogle, signInWithToken, logout, loadMe, changePassword],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

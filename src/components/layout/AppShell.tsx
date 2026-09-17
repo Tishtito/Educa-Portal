@@ -9,8 +9,8 @@ import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import { useNativeBackButton } from '@/lib/native'
 
 function useVisibleNavigation(): NavItem[] {
-  const { isClassTeacher, isExaminer } = useAuth()
-  return navigation.filter((item) => item.duty === 'all' || (item.duty === 'class_teacher' ? isClassTeacher : isExaminer))
+  const { can } = useAuth()
+  return navigation.filter((item) => item.permissions.length === 0 || can(...item.permissions))
 }
 
 /**

@@ -1,11 +1,14 @@
 import { createContext } from 'react'
-import type { LoginResponse, RoleSlug, User } from '@/lib/api/types'
+import type { LoginResponse, User } from '@/lib/api/types'
+import { clientPlatform, describeDevice } from '@/lib/device'
+import type { Permission } from '@/lib/permissions'
 
-/** Roles that do their work in this app. Administrators use Educa Admin. */
-export const STAFF_ROLES: RoleSlug[] = ['class_teacher', 'examiner']
 
-/** The name this app's API tokens carry (visible to the API as the device). */
-export const DEVICE_NAME = 'educa-portal'
+/** Which app a session belongs to, on the signed-in devices list. */
+export const APP_ID = 'portal'
+
+/** What this device says about itself when it signs in (the API records it on the session). */
+export const deviceFields = () => ({ device_name: describeDevice(), app: APP_ID, platform: clientPlatform() })
 
 export type AuthStatus = 'loading' | 'guest' | 'authenticated' | 'offline'
 
@@ -20,9 +23,11 @@ export interface AuthContextValue {
   user: User | null
   school: { slug: string; name: string } | null
   mustChangePassword: boolean
-  isClassTeacher: boolean
-  isExaminer: boolean
+  /** Whether the user holds ANY of these permissions (the API's `can:`). */
+  can: (...permissions: Permission[]) => boolean
   login: (input: LoginInput) => Promise<User>
+  /** Signs in with an ID token from Google. The API finds the account; it never creates one. */
+  loginWithGoogle: (idToken: string) => Promise<User>
   /** Adopts a token from an invitation or password reset. Throws NotStaffError for administrator-only accounts. */
   signInWithToken: (result: LoginResponse) => Promise<User>
   logout: () => Promise<void>
@@ -34,9 +39,10 @@ export const AuthContext = createContext<AuthContextValue | null>(null)
 
 export class NotStaffError extends Error {
   constructor() {
-    super('This app is for class teachers and examiners. School administrators use Educa Admin.')
+    super('Your account cannot use Educa Staff. School administrators use Educa Admin.')
     this.name = 'NotStaffError'
   }
 }
 
-export const hasStaffRole = (user: Pick<User, 'roles'>) => user.roles.some((role) => STAFF_ROLES.includes(role))
+/** The staff portal is for whoever may use it, whatever their role is called. */
+export const mayUsePortal = (user: Pick<User, 'permissions'>) => user.permissions.includes('access_staff_portal')

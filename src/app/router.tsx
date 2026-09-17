@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router'
-import { GuestOnly, RequireAuth, RequireDuty } from '@/auth/guards'
+import { GuestOnly, RequireAuth, RequirePermission } from '@/auth/guards'
 import { AppShell } from '@/components/layout/AppShell'
 import { ChangePasswordPage } from '@/features/auth/ChangePasswordPage'
 import { LoginPage } from '@/features/auth/LoginPage'
@@ -22,6 +22,8 @@ export const router = createBrowserRouter([
           { path: '/forgot-password', ...page(() => import('@/features/auth/ForgotPasswordPage'), 'ForgotPasswordPage') },
         ],
       },
+      // Google's sign-in popup returns here on the web (lib/google.ts).
+      { path: '/auth/google/callback', ...page(() => import('@/features/auth/GoogleCallbackPage'), 'GoogleCallbackPage') },
       // Emailed links. Not GuestOnly: a signed-in browser is asked to sign out first.
       { path: '/invite/:token', ...page(() => import('@/features/auth/AccountLinkPage'), 'InvitationPage') },
       { path: '/reset-password/:token', ...page(() => import('@/features/auth/AccountLinkPage'), 'ResetPasswordPage') },
@@ -35,21 +37,27 @@ export const router = createBrowserRouter([
               { path: '/', ...page(() => import('@/features/home/HomePage'), 'HomePage') },
               { path: '/account', ...page(() => import('@/features/account/AccountPage'), 'AccountPage') },
               {
-                element: <RequireDuty duty="examiner" />,
+                element: <RequirePermission permission="enter_marks" />,
                 children: [
                   { path: '/marking', ...page(() => import('@/features/marking/MarkingPage'), 'MarkingPage') },
                   { path: '/marking/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
                 ],
               },
               {
-                element: <RequireDuty duty="class_teacher" />,
+                element: <RequirePermission permission="view_class_pupils" />,
                 children: [
                   { path: '/class', ...page(() => import('@/features/class/ClassPage'), 'ClassPage') },
                   { path: '/class/students/:studentId', ...page(() => import('@/features/class/PupilPage'), 'PupilPage') },
                   { path: '/class/marks/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
-                  { path: '/marklist', ...page(() => import('@/features/marklist/MarklistPage'), 'MarklistPage') },
-                  { path: '/report-cards', ...page(() => import('@/features/report-cards/ReportCardsPage'), 'ReportCardsPage') },
                 ],
+              },
+              {
+                element: <RequirePermission permission="view_marklists" />,
+                children: [{ path: '/marklist', ...page(() => import('@/features/marklist/MarklistPage'), 'MarklistPage') }],
+              },
+              {
+                element: <RequirePermission permission={['view_report_cards', 'edit_report_entries']} />,
+                children: [{ path: '/report-cards', ...page(() => import('@/features/report-cards/ReportCardsPage'), 'ReportCardsPage') }],
               },
               { path: '*', element: <NotFoundPage /> },
             ],

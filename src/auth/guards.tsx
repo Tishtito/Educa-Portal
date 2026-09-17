@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from 'react-router'
 import { WifiOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FullScreenLoader } from '@/components/data/FullScreenLoader'
+import type { Permission } from '@/lib/permissions'
 import { useAuth } from './useAuth'
 
 export function RequireAuth() {
@@ -35,10 +36,9 @@ export function GuestOnly() {
   return <Outlet />
 }
 
-/** Class-teacher or examiner-only areas. Someone without the role goes home. */
-export function RequireDuty({ duty, children }: { duty: 'class_teacher' | 'examiner'; children?: ReactNode }) {
-  const { isClassTeacher, isExaminer } = useAuth()
-  const allowed = duty === 'class_teacher' ? isClassTeacher : isExaminer
-  if (!allowed) return <Navigate to="/" replace />
+/** Areas that need a permission (any of those listed). Without it, back home. */
+export function RequirePermission({ permission, children }: { permission: Permission | Permission[]; children?: ReactNode }) {
+  const { can } = useAuth()
+  if (!can(...(Array.isArray(permission) ? permission : [permission]))) return <Navigate to="/" replace />
   return children ?? <Outlet />
 }

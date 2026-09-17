@@ -1,9 +1,13 @@
+import type { Permission } from '@/lib/permissions'
+
 /**
  * TypeScript mirrors of the Educa_Lara JSON responses. The Laravel resources
  * and controllers are the authority; keep these in step with them.
  */
 
-export type RoleSlug = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner'
+/** The built-in roles. A school's own roles have slugs of their own, hence `string` on users. */
+export type BuiltInRole = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner'
+export type RoleSlug = BuiltInRole | (string & {})
 
 export interface School {
   uuid: string
@@ -27,8 +31,13 @@ export interface User {
   is_active: boolean
   must_change_password: boolean
   last_login_at: string | null
+  /** Whether Continue with Google signs in to this account. */
+  google_connected: boolean
   is_platform_admin: boolean
   roles: RoleSlug[]
+  role_names: string[]
+  /** What this person may do in their school (docs/permissions.md). The API enforces it regardless. */
+  permissions: Permission[]
   school: School | null
 }
 
