@@ -5,6 +5,7 @@ import { navigation, type NavItem } from '@/app/navigation'
 import { useAuth } from '@/auth/useAuth'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { ExamSwitcher } from '@/features/exams/ExamSwitcher'
+import { SubscriptionBanner } from '@/features/subscription/SubscriptionLock'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import { useNativeBackButton } from '@/lib/native'
 
@@ -74,6 +75,7 @@ export function AppShell() {
               <div className="h-full w-1/3 animate-[educa-progress_1s_ease-in-out_infinite] bg-primary" />
             </div>
           )}
+          <SubscriptionBanner />
           {!online && (
             <div className="flex items-center justify-center gap-2 bg-amber-100 px-3 py-1 text-xs text-amber-900 dark:bg-amber-950 dark:text-amber-200">
               <WifiOffIcon className="size-3.5" /> You are offline. Marks cannot be saved until you reconnect.

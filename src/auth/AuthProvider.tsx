@@ -55,11 +55,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const offPassword = session.on('password-change-required', () =>
       setUser((current) => (current ? { ...current, must_change_password: true } : current)),
     )
+    const offSubscription = session.on('subscription-required', () => void loadMe())
     return () => {
       offUnauthorized()
       offPassword()
+      offSubscription()
     }
-  }, [becomeGuest])
+  }, [becomeGuest, loadMe])
 
   /** Adopts a token the API has just issued (sign-in, invitation, password reset). */
   const signInWithToken = useCallback<AuthContextValue['signInWithToken']>(

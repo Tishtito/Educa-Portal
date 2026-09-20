@@ -9,6 +9,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/in
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useMarking } from '@/features/exams/api'
+import { SubscriptionLock } from '@/features/subscription/SubscriptionLock'
 import { useCurrentExam } from '@/features/exams/useCurrentExam'
 import type { Student } from '@/lib/api/types'
 import { AdmitPupilDialog } from './AdmitPupilDialog'
@@ -56,7 +57,9 @@ export function ClassPage() {
           <Pupils key={current.class_id} classId={current.class_id} className={current.class_name} />
         </TabsContent>
         <TabsContent value="marks" className="mt-4">
-          <Marks classId={current.class_id} />
+          <SubscriptionLock>
+            <Marks classId={current.class_id} />
+          </SubscriptionLock>
         </TabsContent>
       </Tabs>
     </>

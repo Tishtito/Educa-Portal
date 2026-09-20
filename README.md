@@ -55,6 +55,11 @@ client. Set-up, including the Android SHA-1 and the iOS URL scheme, is in
 `Educa_Lara/docs/authentication.md`. Sessions end after 90 days, or 30 days
 unused. The Account page lists signed-in devices and can sign them out.
 
+**Subscription.** While the school's Educa subscription has lapsed, **Marking**,
+**Mark list**, **Reports** and a class's **Marks** tab are blurred with a notice,
+and the API refuses them with 402. Pupils and the account stay usable. Renewal
+happens in Educa Admin.
+
 A user who is only an administrator is refused and pointed to Educa Admin. An
 administrator who is also a class teacher or examiner can sign in.
 

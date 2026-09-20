@@ -18,6 +18,20 @@ export interface School {
   logo_path: string | null
   timezone: string
   status: 'onboarding' | 'active' | 'suspended'
+  /** Whether marking, mark lists and report cards are open (Educa_Lara docs/billing.md). */
+  subscription?: SubscriptionState
+}
+
+export interface SubscriptionState {
+  /** overdue: marking, mark lists and report cards are locked (the API answers 402). */
+  status: 'trial' | 'active' | 'overdue'
+  paid_until: string | null
+  days_left: number
+  is_trial: boolean
+  cycle_months: number | null
+  price_kes: number | null
+  credit_kes: number
+  amount_due_kes: number | null
 }
 
 export interface User {

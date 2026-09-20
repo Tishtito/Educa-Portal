@@ -44,10 +44,12 @@ export const PERMISSIONS = [
   'reset_staff_passwords',
   'sign_out_staff',
   'manage_assignments',
+  'manage_billing',
   'view_roles',
   'manage_roles',
   'manage_schools',
   'view_system_health',
+  'manage_subscriptions',
 ] as const
 
 export type Permission = (typeof PERMISSIONS)[number]

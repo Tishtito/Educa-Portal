@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router'
 import { GuestOnly, RequireAuth, RequirePermission } from '@/auth/guards'
 import { AppShell } from '@/components/layout/AppShell'
+import { SubscriptionLockedRoutes } from '@/features/subscription/SubscriptionLock'
 import { ChangePasswordPage } from '@/features/auth/ChangePasswordPage'
 import { LoginPage } from '@/features/auth/LoginPage'
 import { NotFoundPage } from './NotFoundPage'
@@ -37,27 +38,37 @@ export const router = createBrowserRouter([
               { path: '/', ...page(() => import('@/features/home/HomePage'), 'HomePage') },
               { path: '/account', ...page(() => import('@/features/account/AccountPage'), 'AccountPage') },
               {
-                element: <RequirePermission permission="enter_marks" />,
-                children: [
-                  { path: '/marking', ...page(() => import('@/features/marking/MarkingPage'), 'MarkingPage') },
-                  { path: '/marking/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
-                ],
-              },
-              {
                 element: <RequirePermission permission="view_class_pupils" />,
                 children: [
                   { path: '/class', ...page(() => import('@/features/class/ClassPage'), 'ClassPage') },
                   { path: '/class/students/:studentId', ...page(() => import('@/features/class/PupilPage'), 'PupilPage') },
-                  { path: '/class/marks/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
+                  // Marks lock with the subscription; the class's pupils do not.
+                  {
+                    element: <SubscriptionLockedRoutes />,
+                    children: [{ path: '/class/marks/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') }],
+                  },
                 ],
               },
+              // Marking, mark lists and report cards lock while the school's subscription has lapsed.
               {
-                element: <RequirePermission permission="view_marklists" />,
-                children: [{ path: '/marklist', ...page(() => import('@/features/marklist/MarklistPage'), 'MarklistPage') }],
-              },
-              {
-                element: <RequirePermission permission={['view_report_cards', 'edit_report_entries']} />,
-                children: [{ path: '/report-cards', ...page(() => import('@/features/report-cards/ReportCardsPage'), 'ReportCardsPage') }],
+                element: <SubscriptionLockedRoutes />,
+                children: [
+                  {
+                    element: <RequirePermission permission="enter_marks" />,
+                    children: [
+                      { path: '/marking', ...page(() => import('@/features/marking/MarkingPage'), 'MarkingPage') },
+                      { path: '/marking/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
+                    ],
+                  },
+                  {
+                    element: <RequirePermission permission="view_marklists" />,
+                    children: [{ path: '/marklist', ...page(() => import('@/features/marklist/MarklistPage'), 'MarklistPage') }],
+                  },
+                  {
+                    element: <RequirePermission permission={['view_report_cards', 'edit_report_entries']} />,
+                    children: [{ path: '/report-cards', ...page(() => import('@/features/report-cards/ReportCardsPage'), 'ReportCardsPage') }],
+                  },
+                ],
               },
               { path: '*', element: <NotFoundPage /> },
             ],
