@@ -42,7 +42,7 @@ export function useActiveClasses() {
 }
 
 export interface AdmitInput {
-  admission_no: string
+  assessment_no: string
   first_name: string
   middle_name: string | null
   last_name: string

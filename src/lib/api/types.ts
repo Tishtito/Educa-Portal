@@ -218,7 +218,7 @@ export interface MarksheetMark {
 export interface MarksheetStudent {
   enrolment_id: number
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   marks: MarksheetMark[]
   subject_score: number | null
@@ -279,7 +279,7 @@ export interface MarklistScore {
 
 export interface MarklistStudent {
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   total_marks: number | null
   mean_marks: number | null
@@ -357,7 +357,7 @@ export interface ReportCard {
   head_teacher: string | null
   footer: string | null
   generated_at: string
-  student: { student_id: number; enrolment_id: number; admission_no: string | null; name: string }
+  student: { student_id: number; enrolment_id: number; assessment_no: string | null; name: string }
   rows: ReportRow[]
   totals: ReportTotals[]
   entry: { class_teacher_remarks: string | null; fee_balance: number | null }
@@ -369,7 +369,7 @@ export interface ReportCard {
 export interface ReportEntryRow {
   enrolment_id: number
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   class_teacher_remarks: string | null
   fee_balance: number | null
@@ -547,7 +547,7 @@ export type StudentStatus = 'active' | 'transferred' | 'graduated' | 'inactive'
 
 export interface Student {
   id: number
-  admission_no: string
+  assessment_no: string
   upi: string | null
   first_name: string
   middle_name: string | null
@@ -647,7 +647,7 @@ export interface StreamList {
   subjects: { level_subject_id: number; name: string; code: string }[]
   students: {
     student_id: number
-    admission_no: string | null
+    assessment_no: string | null
     name: string
     class_id: number
     class_name: string

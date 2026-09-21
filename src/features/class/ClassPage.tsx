@@ -81,7 +81,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
           <InputGroupAddon>
             <SearchIcon />
           </InputGroupAddon>
-          <InputGroupInput placeholder="Search name or admission no." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search pupils" />
+          <InputGroupInput placeholder="Search name or assessment no." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search pupils" />
         </InputGroup>
         <Button onClick={() => setAdmitting(true)} className="ml-auto">
           <UserPlusIcon /> Admit pupil
@@ -92,7 +92,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
         {(data) => {
           const term = search.trim().toLowerCase()
           const pupils = term
-            ? data.students.filter((s) => s.full_name.toLowerCase().includes(term) || s.admission_no.toLowerCase().includes(term))
+            ? data.students.filter((s) => s.full_name.toLowerCase().includes(term) || s.assessment_no.toLowerCase().includes(term))
             : data.students
 
           if (data.students.length === 0) {
@@ -109,7 +109,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
                       <div className="min-w-0 flex-1">
                         <div className="truncate font-medium">{pupil.full_name}</div>
                         <div className="truncate text-xs text-muted-foreground">
-                          {[pupil.admission_no, pupil.guardian_name, pupil.guardian_phone].filter(Boolean).join(' · ')}
+                          {[pupil.assessment_no, pupil.guardian_name, pupil.guardian_phone].filter(Boolean).join(' · ')}
                         </div>
                       </div>
                       <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />

@@ -36,7 +36,7 @@ function Profile({ pupil }: { pupil: Student }) {
   const inMyClass = !!current && !!assignments.data?.class_teacher_of.some((c) => c.class_id === current.class_id)
 
   const details: [string, string | null][] = [
-    ['Admission no.', pupil.admission_no],
+    ['Assessment no.', pupil.assessment_no],
     ['UPI', pupil.upi],
     ['Gender', pupil.gender ? pupil.gender[0].toUpperCase() + pupil.gender.slice(1) : null],
     ['Date of birth', pupil.date_of_birth ? formatDate(pupil.date_of_birth) : null],

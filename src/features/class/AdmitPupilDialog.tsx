@@ -13,7 +13,7 @@ import { useAdmitPupil } from './api'
 const NONE = 'none'
 
 const schema = z.object({
-  admission_no: z.string().trim().min(1, 'Enter the admission number').max(40),
+  assessment_no: z.string().trim().min(1, 'Enter the assessment number').max(40),
   first_name: z.string().trim().min(1, 'Enter the first name').max(80),
   middle_name: z.string().trim().max(80),
   last_name: z.string().trim().min(1, 'Enter the last name').max(80),
@@ -26,7 +26,7 @@ const schema = z.object({
 
 type Values = z.infer<typeof schema>
 
-const FIELDS = ['admission_no', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'guardian_name', 'guardian_phone', 'upi'] as const
+const FIELDS = ['assessment_no', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'guardian_name', 'guardian_phone', 'upi'] as const
 
 /** Admit a new pupil straight into the teacher's class for this year. */
 export function AdmitPupilDialog({
@@ -44,7 +44,7 @@ export function AdmitPupilDialog({
   const form = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: {
-      admission_no: '',
+      assessment_no: '',
       first_name: '',
       middle_name: '',
       last_name: '',
@@ -61,7 +61,7 @@ export function AdmitPupilDialog({
   async function submit(values: Values) {
     try {
       const saved = await admit.mutateAsync({
-        admission_no: values.admission_no,
+        assessment_no: values.assessment_no,
         first_name: values.first_name,
         middle_name: values.middle_name || null,
         last_name: values.last_name,
@@ -90,8 +90,8 @@ export function AdmitPupilDialog({
       wide
     >
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Admission no." htmlFor="st-adm" error={errors.admission_no?.message}>
-          <Input id="st-adm" {...form.register('admission_no')} />
+        <Field label="Assessment no." htmlFor="st-adm" error={errors.assessment_no?.message}>
+          <Input id="st-adm" {...form.register('assessment_no')} />
         </Field>
         <Field label="UPI (NEMIS)" htmlFor="st-upi" error={errors.upi?.message}>
           <Input id="st-upi" {...form.register('upi')} />
