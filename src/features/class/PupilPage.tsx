@@ -42,6 +42,7 @@ function Profile({ pupil }: { pupil: Student }) {
     ['Date of birth', pupil.date_of_birth ? formatDate(pupil.date_of_birth) : null],
     ['Guardian', pupil.guardian_name],
     ['Guardian phone', pupil.guardian_phone],
+    ['Joined', current?.started_on ? formatDate(current.started_on) : null],
   ]
 
   return (
