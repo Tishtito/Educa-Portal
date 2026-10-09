@@ -39,7 +39,7 @@ export const AuthContext = createContext<AuthContextValue | null>(null)
 
 export class NotStaffError extends Error {
   constructor() {
-    super('Your account cannot use Educa Staff. School administrators use Educa Admin.')
+    super('Your account cannot use Elimu Pass Portal. School administrators use Elimu Pass Admin.')
     this.name = 'NotStaffError'
   }
 }

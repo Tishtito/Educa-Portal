@@ -1,16 +1,16 @@
-# Educa Staff
+# Elimu Pass Portal
 
-The staff portal for **Educa**, used by **examiners** and **class teachers**:
+The staff portal for **Elimu Pass**, used by **examiners** and **class teachers**:
 
 - **Examiners** enter marks for the subjects they are assigned.
 - **Class teachers** look after their class: pupils, mark lists and report cards.
 
 School administrators and platform superadmins use
-[Educa Admin](../Educa_Admin) instead.
+[Elimu Pass Admin](../Educa_Admin) instead.
 
 It is a React app that runs as an installable **PWA** and ships as **Android**
 and **iOS** apps through Capacitor. All data comes from the Laravel API in
-[`../Educa_Lara`](../Educa_Lara). The stack is the same as Educa Admin's. The
+[`../Educa_Lara`](../Educa_Lara). The stack is the same as Elimu Pass Admin's. The
 foundation (API client, UI kit, marksheet and report-card components) was copied
 from there, not shared, so the two apps can be released separately.
 
@@ -34,8 +34,8 @@ Run the API alongside it (`composer run dev` in `Educa_Lara`). The API's default
 `CORS_ALLOWED_ORIGINS` already includes `localhost:5174` and the preview port
 `4174`.
 
-Three dev servers run side by side, each on a fixed port: **5173** Educa Admin,
-**5174** Educa Staff, **5170** the API's own Vite (Laravel's welcome page).
+Three dev servers run side by side, each on a fixed port: **5173** Elimu Pass Admin,
+**5174** Elimu Pass Portal, **5170** the API's own Vite (Laravel's welcome page).
 A port clash now fails loudly instead of moving an app onto a neighbour's port.
 
 Demo sign-in after seeding the API:
@@ -55,12 +55,12 @@ client. Set-up, including the Android SHA-1 and the iOS URL scheme, is in
 `Educa_Lara/docs/authentication.md`. Sessions end after 90 days, or 30 days
 unused. The Account page lists signed-in devices and can sign them out.
 
-**Subscription.** While the school's Educa subscription has lapsed, **Marking**,
+**Subscription.** While the school's Elimu Pass subscription has lapsed, **Marking**,
 **Mark list**, **Reports** and a class's **Marks** tab are blurred with a notice,
 and the API refuses them with 402. Pupils and the account stay usable. Renewal
-happens in Educa Admin.
+happens in Elimu Pass Admin.
 
-A user who is only an administrator is refused and pointed to Educa Admin. An
+A user who is only an administrator is refused and pointed to Elimu Pass Admin. An
 administrator who is also a class teacher or examiner can sign in.
 
 Staff invited by email set their password at `/invite/:token`. "Forgot your
@@ -129,7 +129,7 @@ API endpoints specific to this app (all in `Educa_Lara/routes/api.php`):
 | `POST /my/students/{student}/move` | Move a pupil out of my class |
 | `GET /my/students/{student}` and `/results` | Profile and results of a pupil I teach or taught |
 
-Educa Admin's conventions apply here too:
+Elimu Pass Admin's conventions apply here too:
 
 - API errors arrive as `ApiError`.
 - Unsaved marks and remarks are protected from background refetches and from
@@ -140,4 +140,4 @@ Educa Admin's conventions apply here too:
 
 See `../Educa_Admin/README.md` for details, deployment of the PWA, and
 building the native apps. The steps are identical, with this app's ids:
-`ke.codepass.educa.portal`, "Educa Staff", dev port 5174.
+`ke.codepass.educa.portal`, "Elimu Pass Portal", dev port 5174.

@@ -20,7 +20,7 @@ export function AccountPage() {
   return (
     <>
       <PageHeader title="Account" description={school?.name} />
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid items-start gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="text-base">{user.name}</CardTitle>
@@ -86,7 +86,7 @@ export function AccountPage() {
             <ChangePasswordForm />
           </CardContent>
         </Card>
-        <div className="lg:col-span-2">
+        <div className="sm:col-span-2">
           <SessionsCard />
         </div>
       </div>

@@ -16,7 +16,7 @@ export function useSubscription(): SubscriptionState | null {
 /**
  * Blurs and disables what it wraps while the school's subscription has lapsed.
  * The API refuses marking, mark lists and report cards as well (402); this is
- * so teachers see why instead of a page of errors. Renewal happens in Educa
+ * so teachers see why instead of a page of errors. Renewal happens in Elimu Pass
  * Admin, so there is nothing to pay here.
  */
 export function SubscriptionLock({ children }: { children: ReactNode }) {
@@ -40,10 +40,10 @@ export function SubscriptionLock({ children }: { children: ReactNode }) {
               <div className="mb-2 flex size-10 items-center justify-center rounded-full bg-destructive/10 text-destructive">
                 <LockIcon className="size-5" />
               </div>
-              <CardTitle id="subscription-locked-title">{school?.name ?? 'Your school'}'s Educa subscription has ended</CardTitle>
+              <CardTitle id="subscription-locked-title">{school?.name ?? 'Your school'}'s Elimu Pass subscription has ended</CardTitle>
               <CardDescription>
                 {subscription.paid_until ? `It ended on ${formatDate(subscription.paid_until)}. ` : ''}
-                Marking, mark lists and report cards are locked until your school administrator renews it. Nothing has been deleted: your marks are kept.
+                Marking, mark lists, report cards and the timetable are locked until your school administrator renews it. Nothing has been deleted: your marks are kept.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -81,8 +81,8 @@ export function SubscriptionBanner() {
     >
       <AlertTriangleIcon className="size-3.5" />
       {overdue
-        ? 'Your school’s Educa subscription has ended. Marking and report cards are locked.'
-        : `Your school’s Educa subscription ends ${subscription.days_left === 1 ? 'today' : `in ${subscription.days_left} days`}. Remind your administrator to renew it.`}
+        ? 'Your school’s Elimu Pass subscription has ended. Marking and report cards are locked.'
+        : `Your school’s Elimu Pass subscription ends ${subscription.days_left === 1 ? 'today' : `in ${subscription.days_left} days`}. Remind your administrator to renew it.`}
     </div>
   )
 }
