@@ -6,7 +6,7 @@ import type { Permission } from '@/lib/permissions'
  */
 
 /** The built-in roles. A school's own roles have slugs of their own, hence `string` on users. */
-export type BuiltInRole = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner'
+export type BuiltInRole = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner' | 'teacher'
 export type RoleSlug = BuiltInRole | (string & {})
 
 export interface School {

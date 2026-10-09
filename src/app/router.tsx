@@ -49,10 +49,14 @@ export const router = createBrowserRouter([
                   },
                 ],
               },
-              // Marking, mark lists and report cards lock while the school's subscription has lapsed.
+              // Marking, mark lists, report cards and the timetable lock while the school's subscription has lapsed.
               {
                 element: <SubscriptionLockedRoutes />,
                 children: [
+                  {
+                    element: <RequirePermission permission="view_own_timetable" />,
+                    children: [{ path: '/timetable', ...page(() => import('@/features/timetable/TimetablePage'), 'TimetablePage') }],
+                  },
                   {
                     element: <RequirePermission permission="enter_marks" />,
                     children: [

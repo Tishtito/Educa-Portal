@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRightIcon, ClipboardPenIcon, FileTextIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
+import { ArrowRightIcon, CalendarRangeIcon, ClipboardPenIcon, FileTextIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
 import { useAuth } from '@/auth/useAuth'
 import { EmptyState, ErrorPanel } from '@/components/data/QueryState'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,9 @@ import { ExamStatusBadge } from '@/features/exams/ExamStatusBadge'
 import { hasFinalResults, staffStatusText } from '@/features/exams/staffStatus'
 import { useCurrentExam } from '@/features/exams/useCurrentExam'
 import { useMyAssignments } from '@/features/me/api'
+import { useMyTimetable } from '@/features/timetable/api'
+import { useSubscription } from '@/features/subscription/SubscriptionLock'
+import { NowAndNext } from '@/features/timetable/NowAndNext'
 import type { MyAssignments, MyExam } from '@/lib/api/types'
 import { formatDate } from '@/lib/format'
 
@@ -28,6 +31,8 @@ export function HomePage() {
         <p className="text-sm text-muted-foreground">{school?.name}</p>
         <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Hello{user?.name ? `, ${user.name.split(' ')[0]}` : ''}</h1>
       </div>
+
+      {can('view_own_timetable') && <TimetableCard />}
 
       {isPending ? (
         <Skeleton className="h-28" />
@@ -163,5 +168,24 @@ function ClassCard({ exam, classInfo }: { exam: MyExam | null; classInfo: MyAssi
         )}
       </CardFooter>
     </Card>
+  )
+}
+
+/** Now and next from my published timetable. Hidden until one is published, and while the subscription is locked. */
+function TimetableCard() {
+  const locked = useSubscription()?.status === 'overdue'
+  const timetable = useMyTimetable(!locked)
+  const lessons = timetable.data?.lessons ?? []
+  if (lessons.length === 0) return null
+
+  return (
+    <div className="grid gap-2">
+      <NowAndNext lessons={lessons} />
+      <Button asChild size="sm" variant="ghost" className="justify-self-start">
+        <Link to="/timetable">
+          <CalendarRangeIcon /> My timetable <ArrowRightIcon />
+        </Link>
+      </Button>
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 import type { Permission } from '@/lib/permissions'
 import type { LucideIcon } from 'lucide-react'
-import { ClipboardPenIcon, FileTextIcon, HomeIcon, ListOrderedIcon, UserIcon, UsersIcon } from 'lucide-react'
+import { CalendarRangeIcon, ClipboardPenIcon, FileTextIcon, HomeIcon, ListOrderedIcon, UserIcon, UsersIcon } from 'lucide-react'
 
 
 export interface NavItem {
@@ -14,6 +14,7 @@ export interface NavItem {
 
 export const navigation: NavItem[] = [
   { to: '/', label: 'Home', icon: HomeIcon, permissions: [], end: true },
+  { to: '/timetable', label: 'Timetable', icon: CalendarRangeIcon, permissions: ['view_own_timetable'] },
   { to: '/marking', label: 'Marking', icon: ClipboardPenIcon, permissions: ['enter_marks'] },
   { to: '/class', label: 'My class', icon: UsersIcon, permissions: ['view_class_pupils'] },
   { to: '/marklist', label: 'Mark list', icon: ListOrderedIcon, permissions: ['view_marklists'] },

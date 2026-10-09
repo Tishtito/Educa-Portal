@@ -1,4 +1,4 @@
-# Deploying Educa Staff
+# Deploying Elimu Pass Portal
 
 Production is **https://portal.educa.codepasstech.top**, a static build of this
 repo served by nginx on the Codepasstech VPS. There is no server process: `npm
@@ -48,7 +48,7 @@ git add -A && git commit -m "..."
 git push origin dev          # ~2 minutes to live
 ```
 
-Watch it at <https://github.com/Tishtito/Educa-Portal/actions>.
+Watch it at <https://github.com/Tishtito/Elimu Pass-Portal/actions>.
 
 `dev` is the only branch CI touches. `main` is dormant: nothing builds or
 deploys from it.

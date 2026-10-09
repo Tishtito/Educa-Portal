@@ -63,14 +63,14 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b bg-background/90 pt-[env(safe-area-inset-top)] backdrop-blur print:hidden">
           <div className="flex h-14 items-center gap-2 px-3 sm:px-6">
-            <img src="/logo.svg" alt="Educa Staff" className="size-8 shrink-0 rounded-lg lg:hidden" />
+            <img src="/logo.svg" alt="Elimu Pass Portal" className="size-8 shrink-0 rounded-lg lg:hidden" />
             <div className="ml-auto flex min-w-0 items-center gap-2 lg:ml-0">
               <ExamSwitcher />
             </div>
           </div>
           {navigating && (
             <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden" role="progressbar" aria-label="Loading page">
-              <div className="h-full w-1/3 animate-[educa-progress_1s_ease-in-out_infinite] bg-primary" />
+              <div className="h-full w-1/3 animate-[elimupass-progress_1s_ease-in-out_infinite] bg-primary" />
             </div>
           )}
           <SubscriptionBanner />
@@ -96,7 +96,7 @@ function Brand({ school }: { school?: string }) {
     <div className="flex h-14 items-center gap-2 border-b px-4">
       <img src="/logo.svg" alt="" className="size-8 rounded-lg" />
       <div className="min-w-0">
-        <div className="text-sm font-semibold leading-tight">Educa Staff</div>
+        <div className="text-sm font-semibold leading-tight">Elimu Pass Portal</div>
         {school && <div className="truncate text-xs text-muted-foreground">{school}</div>}
       </div>
     </div>
