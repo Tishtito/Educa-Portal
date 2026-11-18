@@ -7,7 +7,7 @@ const score = (level_subject_id: number, value: number | null, band: string | nu
 })
 
 const student = (student_id: number, mean: number | null, meanBand: string | null, scores: MarklistScore[]): MarklistStudent => ({
-  student_id, admission_no: `A${student_id}`, name: `Pupil ${student_id}`, total_marks: mean, mean_marks: mean, mean_band: meanBand, mean_band_label: null,
+  student_id, assessment_no: `A${student_id}`, name: `Pupil ${student_id}`, total_marks: mean, mean_marks: mean, mean_band: meanBand, mean_band_label: null,
   grade_position: null, stream_position: null, grade_cohort_size: null, stream_cohort_size: null, is_complete: true,
   subjects_expected: scores.length, subjects_counted: scores.length, scores,
 })

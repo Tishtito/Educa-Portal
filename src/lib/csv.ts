@@ -52,12 +52,12 @@ function detectDelimiter(text: string): ',' | ';' | '\t' {
 
 /** Column headings people actually use, mapped to the import's field names. */
 const headerAliases: Record<string, string> = {
-  admission_no: 'admission_no',
-  admission_number: 'admission_no',
-  admission: 'admission_no',
-  adm_no: 'admission_no',
-  adm: 'admission_no',
-  reg_no: 'admission_no',
+  // CBC's word for the pupil's school identifier. Files headed "Admission No"
+  // are refused, with a message naming the column to use.
+  assessment_no: 'assessment_no',
+  assessment_number: 'assessment_no',
+  assessment: 'assessment_no',
+  assmt_no: 'assessment_no',
   name: 'name',
   full_name: 'name',
   pupil_name: 'name',
@@ -88,9 +88,17 @@ const headerAliases: Record<string, string> = {
   phone_number: 'guardian_phone',
   upi: 'upi',
   nemis_upi: 'upi',
+  status: 'status',
+  // The day the pupil joined this class, not their identifier.
+  started_on: 'started_on',
+  joined: 'started_on',
+  date_joined: 'started_on',
+  joining_date: 'started_on',
+  start_date: 'started_on',
+  admission_date: 'started_on',
 }
 
-export const importFields = ['admission_no', 'name', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'class', 'guardian_name', 'guardian_phone', 'upi'] as const
+export const importFields = ['assessment_no', 'name', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'class', 'guardian_name', 'guardian_phone', 'upi', 'status', 'started_on'] as const
 
 export function normaliseHeader(header: string): string | null {
   const key = header

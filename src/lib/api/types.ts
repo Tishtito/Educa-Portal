@@ -1,9 +1,13 @@
+import type { Permission } from '@/lib/permissions'
+
 /**
  * TypeScript mirrors of the Educa_Lara JSON responses. The Laravel resources
  * and controllers are the authority; keep these in step with them.
  */
 
-export type RoleSlug = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner'
+/** The built-in roles. A school's own roles have slugs of their own, hence `string` on users. */
+export type BuiltInRole = 'super_admin' | 'school_admin' | 'class_teacher' | 'examiner' | 'teacher'
+export type RoleSlug = BuiltInRole | (string & {})
 
 export interface School {
   uuid: string
@@ -14,6 +18,20 @@ export interface School {
   logo_path: string | null
   timezone: string
   status: 'onboarding' | 'active' | 'suspended'
+  /** Whether marking, mark lists and report cards are open (Educa_Lara docs/billing.md). */
+  subscription?: SubscriptionState
+}
+
+export interface SubscriptionState {
+  /** overdue: marking, mark lists and report cards are locked (the API answers 402). */
+  status: 'trial' | 'active' | 'overdue'
+  paid_until: string | null
+  days_left: number
+  is_trial: boolean
+  cycle_months: number | null
+  price_kes: number | null
+  credit_kes: number
+  amount_due_kes: number | null
 }
 
 export interface User {
@@ -27,8 +45,13 @@ export interface User {
   is_active: boolean
   must_change_password: boolean
   last_login_at: string | null
+  /** Whether Continue with Google signs in to this account. */
+  google_connected: boolean
   is_platform_admin: boolean
   roles: RoleSlug[]
+  role_names: string[]
+  /** What this person may do in their school (docs/permissions.md). The API enforces it regardless. */
+  permissions: Permission[]
   school: School | null
 }
 
@@ -195,7 +218,7 @@ export interface MarksheetMark {
 export interface MarksheetStudent {
   enrolment_id: number
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   marks: MarksheetMark[]
   subject_score: number | null
@@ -256,7 +279,7 @@ export interface MarklistScore {
 
 export interface MarklistStudent {
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   total_marks: number | null
   mean_marks: number | null
@@ -334,7 +357,7 @@ export interface ReportCard {
   head_teacher: string | null
   footer: string | null
   generated_at: string
-  student: { student_id: number; enrolment_id: number; admission_no: string | null; name: string }
+  student: { student_id: number; enrolment_id: number; assessment_no: string | null; name: string }
   rows: ReportRow[]
   totals: ReportTotals[]
   entry: { class_teacher_remarks: string | null; fee_balance: number | null }
@@ -346,7 +369,7 @@ export interface ReportCard {
 export interface ReportEntryRow {
   enrolment_id: number
   student_id: number
-  admission_no: string | null
+  assessment_no: string | null
   name: string
   class_teacher_remarks: string | null
   fee_balance: number | null
@@ -524,7 +547,7 @@ export type StudentStatus = 'active' | 'transferred' | 'graduated' | 'inactive'
 
 export interface Student {
   id: number
-  admission_no: string
+  assessment_no: string
   upi: string | null
   first_name: string
   middle_name: string | null
@@ -624,7 +647,7 @@ export interface StreamList {
   subjects: { level_subject_id: number; name: string; code: string }[]
   students: {
     student_id: number
-    admission_no: string | null
+    assessment_no: string | null
     name: string
     class_id: number
     class_name: string
@@ -699,4 +722,29 @@ export interface ClassRoster {
   class: { id: number; name: string }
   academic_year_id: number | null
   students: Student[]
+}
+
+// --- Teaching materials (Educa_Lara docs/teaching-materials.md) ---
+
+export interface TeachingMaterial {
+  id: number
+  title: string
+  description: string | null
+  level_id: number
+  level?: { id: number; code: string; name: string }
+  /** Empty = the whole section. */
+  grades?: { id: number; code: string; name: string }[]
+  level_subject_id: number | null
+  subject?: { id: number; name: string; code: string } | null
+  extension: string
+  size_bytes: number
+  published_at: string | null
+  /** Published in the last 7 days. */
+  is_new: boolean
+}
+
+export interface MaterialSummary {
+  levels: { id: number; code: string; name: string; count: number; grades: { id: number; code: string; name: string; count: number }[] }[]
+  my_grade_ids: number[]
+  new_for_my_grades: number
 }

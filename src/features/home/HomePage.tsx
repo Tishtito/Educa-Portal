@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRightIcon, ClipboardPenIcon, FileTextIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
+import { ArrowRightIcon, CalendarRangeIcon, ClipboardPenIcon, FileTextIcon, LibraryIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
 import { useAuth } from '@/auth/useAuth'
 import { EmptyState, ErrorPanel } from '@/components/data/QueryState'
 import { Button } from '@/components/ui/button'
@@ -10,12 +10,18 @@ import { useReportEntries } from '@/features/exams/api'
 import { ExamStatusBadge } from '@/features/exams/ExamStatusBadge'
 import { hasFinalResults, staffStatusText } from '@/features/exams/staffStatus'
 import { useCurrentExam } from '@/features/exams/useCurrentExam'
+import { useMaterialSummary } from '@/features/materials/api'
 import { useMyAssignments } from '@/features/me/api'
+import { useMyTimetable } from '@/features/timetable/api'
+import { useSubscription } from '@/features/subscription/SubscriptionLock'
+import { NowAndNext } from '@/features/timetable/NowAndNext'
 import type { MyAssignments, MyExam } from '@/lib/api/types'
 import { formatDate } from '@/lib/format'
 
 export function HomePage() {
-  const { user, school, isClassTeacher, isExaminer } = useAuth()
+  const { user, school, can } = useAuth()
+  const isExaminer = can('enter_marks')
+  const isClassTeacher = can('view_class_pupils')
   const { exam, isPending, error, refetch } = useCurrentExam()
   const assignments = useMyAssignments()
   const duties = assignments.data && assignments.data.class_teacher_of.length + assignments.data.examiner_of.length
@@ -26,6 +32,10 @@ export function HomePage() {
         <p className="text-sm text-muted-foreground">{school?.name}</p>
         <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">Hello{user?.name ? `, ${user.name.split(' ')[0]}` : ''}</h1>
       </div>
+
+      {can('view_own_timetable') && <TimetableCard />}
+
+      {can('view_teaching_materials') && <MaterialsCard />}
 
       {isPending ? (
         <Skeleton className="h-28" />
@@ -159,6 +169,59 @@ function ClassCard({ exam, classInfo }: { exam: MyExam | null; classInfo: MyAssi
             </Link>
           </Button>
         )}
+      </CardFooter>
+    </Card>
+  )
+}
+
+/** Now and next from my published timetable. Hidden until one is published, and while the subscription is locked. */
+function TimetableCard() {
+  const locked = useSubscription()?.status === 'overdue'
+  const timetable = useMyTimetable(!locked)
+  const lessons = timetable.data?.lessons ?? []
+  if (lessons.length === 0) return null
+
+  return (
+    <div className="grid gap-2">
+      <NowAndNext lessons={lessons} />
+      <Button asChild size="sm" variant="ghost" className="justify-self-start">
+        <Link to="/timetable">
+          <CalendarRangeIcon /> My timetable <ArrowRightIcon />
+        </Link>
+      </Button>
+    </div>
+  )
+}
+
+/**
+ * Teaching materials. The way into them on phones, where Materials is not in
+ * the tab bar. Hidden while the subscription is locked, like the timetable.
+ */
+function MaterialsCard() {
+  const locked = useSubscription()?.status === 'overdue'
+  const summary = useMaterialSummary(!locked)
+  if (locked || !summary.data) return null
+
+  const fresh = summary.data.new_for_my_grades
+  const total = summary.data.levels.reduce((sum, level) => sum + level.count, 0)
+  if (total === 0) return null
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <LibraryIcon className="size-4" /> Teaching materials
+        </CardTitle>
+        <CardDescription>
+          {fresh > 0 ? `${fresh} new ${fresh === 1 ? 'material' : 'materials'} for your grades this week` : `${total} ${total === 1 ? 'file' : 'files'} shared by your school`}
+        </CardDescription>
+      </CardHeader>
+      <CardFooter>
+        <Button asChild size="sm" variant={fresh > 0 ? 'default' : 'outline'}>
+          <Link to="/materials">
+            Open materials <ArrowRightIcon />
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   )

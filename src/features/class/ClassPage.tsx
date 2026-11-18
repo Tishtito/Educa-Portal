@@ -9,7 +9,10 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/in
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useMarking } from '@/features/exams/api'
+import { SubscriptionLock } from '@/features/subscription/SubscriptionLock'
 import { useCurrentExam } from '@/features/exams/useCurrentExam'
+import { ClassTimetable } from '@/features/timetable/ClassTimetable'
+import { useAuth } from '@/auth/useAuth'
 import type { Student } from '@/lib/api/types'
 import { AdmitPupilDialog } from './AdmitPupilDialog'
 import { useClassRoster } from './api'
@@ -20,7 +23,9 @@ import { useMyClass } from './useMyClass'
 export function ClassPage() {
   const { assignments, classes, current, setClassId } = useMyClass()
   const [params, setParams] = useSearchParams()
-  const view = params.get('view') === 'marks' ? 'marks' : 'pupils'
+  const { can } = useAuth()
+  const showTimetable = can('view_own_timetable')
+  const view = params.get('view') === 'marks' ? 'marks' : params.get('view') === 'timetable' && showTimetable ? 'timetable' : 'pupils'
 
   if (assignments.isPending) return null
   if (!current) {
@@ -51,13 +56,23 @@ export function ClassPage() {
         <TabsList>
           <TabsTrigger value="pupils">Pupils</TabsTrigger>
           <TabsTrigger value="marks">Marks</TabsTrigger>
+          {showTimetable && <TabsTrigger value="timetable">Timetable</TabsTrigger>}
         </TabsList>
         <TabsContent value="pupils" className="mt-4">
           <Pupils key={current.class_id} classId={current.class_id} className={current.class_name} />
         </TabsContent>
         <TabsContent value="marks" className="mt-4">
-          <Marks classId={current.class_id} />
+          <SubscriptionLock>
+            <Marks classId={current.class_id} />
+          </SubscriptionLock>
         </TabsContent>
+        {showTimetable && (
+          <TabsContent value="timetable" className="mt-4">
+            <SubscriptionLock>
+              <ClassTimetable key={current.class_id} classId={current.class_id} />
+            </SubscriptionLock>
+          </TabsContent>
+        )}
       </Tabs>
     </>
   )
@@ -78,7 +93,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
           <InputGroupAddon>
             <SearchIcon />
           </InputGroupAddon>
-          <InputGroupInput placeholder="Search name or admission no." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search pupils" />
+          <InputGroupInput placeholder="Search name or assessment no." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search pupils" />
         </InputGroup>
         <Button onClick={() => setAdmitting(true)} className="ml-auto">
           <UserPlusIcon /> Admit pupil
@@ -89,7 +104,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
         {(data) => {
           const term = search.trim().toLowerCase()
           const pupils = term
-            ? data.students.filter((s) => s.full_name.toLowerCase().includes(term) || s.admission_no.toLowerCase().includes(term))
+            ? data.students.filter((s) => s.full_name.toLowerCase().includes(term) || s.assessment_no.toLowerCase().includes(term))
             : data.students
 
           if (data.students.length === 0) {
@@ -106,7 +121,7 @@ function Pupils({ classId, className }: { classId: number; className: string }) 
                       <div className="min-w-0 flex-1">
                         <div className="truncate font-medium">{pupil.full_name}</div>
                         <div className="truncate text-xs text-muted-foreground">
-                          {[pupil.admission_no, pupil.guardian_name, pupil.guardian_phone].filter(Boolean).join(' · ')}
+                          {[pupil.assessment_no, pupil.guardian_name, pupil.guardian_phone].filter(Boolean).join(' · ')}
                         </div>
                       </div>
                       <ChevronRightIcon className="size-4 shrink-0 text-muted-foreground" />
