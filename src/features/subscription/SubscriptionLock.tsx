@@ -43,7 +43,7 @@ export function SubscriptionLock({ children }: { children: ReactNode }) {
               <CardTitle id="subscription-locked-title">{school?.name ?? 'Your school'}'s Elimu Pass subscription has ended</CardTitle>
               <CardDescription>
                 {subscription.paid_until ? `It ended on ${formatDate(subscription.paid_until)}. ` : ''}
-                Marking, mark lists, report cards and the timetable are locked until your school administrator renews it. Nothing has been deleted: your marks are kept.
+                Marking, mark lists, report cards, the timetable and teaching materials are locked until your school administrator renews it. Nothing has been deleted: your marks are kept.
               </CardDescription>
             </CardHeader>
           </Card>

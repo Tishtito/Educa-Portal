@@ -723,3 +723,28 @@ export interface ClassRoster {
   academic_year_id: number | null
   students: Student[]
 }
+
+// --- Teaching materials (Educa_Lara docs/teaching-materials.md) ---
+
+export interface TeachingMaterial {
+  id: number
+  title: string
+  description: string | null
+  level_id: number
+  level?: { id: number; code: string; name: string }
+  /** Empty = the whole section. */
+  grades?: { id: number; code: string; name: string }[]
+  level_subject_id: number | null
+  subject?: { id: number; name: string; code: string } | null
+  extension: string
+  size_bytes: number
+  published_at: string | null
+  /** Published in the last 7 days. */
+  is_new: boolean
+}
+
+export interface MaterialSummary {
+  levels: { id: number; code: string; name: string; count: number; grades: { id: number; code: string; name: string; count: number }[] }[]
+  my_grade_ids: number[]
+  new_for_my_grades: number
+}

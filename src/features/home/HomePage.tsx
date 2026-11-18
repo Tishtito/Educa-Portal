@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRightIcon, CalendarRangeIcon, ClipboardPenIcon, FileTextIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
+import { ArrowRightIcon, CalendarRangeIcon, ClipboardPenIcon, FileTextIcon, LibraryIcon, ListOrderedIcon, UsersIcon } from 'lucide-react'
 import { useAuth } from '@/auth/useAuth'
 import { EmptyState, ErrorPanel } from '@/components/data/QueryState'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { useReportEntries } from '@/features/exams/api'
 import { ExamStatusBadge } from '@/features/exams/ExamStatusBadge'
 import { hasFinalResults, staffStatusText } from '@/features/exams/staffStatus'
 import { useCurrentExam } from '@/features/exams/useCurrentExam'
+import { useMaterialSummary } from '@/features/materials/api'
 import { useMyAssignments } from '@/features/me/api'
 import { useMyTimetable } from '@/features/timetable/api'
 import { useSubscription } from '@/features/subscription/SubscriptionLock'
@@ -33,6 +34,8 @@ export function HomePage() {
       </div>
 
       {can('view_own_timetable') && <TimetableCard />}
+
+      {can('view_teaching_materials') && <MaterialsCard />}
 
       {isPending ? (
         <Skeleton className="h-28" />
@@ -187,5 +190,39 @@ function TimetableCard() {
         </Link>
       </Button>
     </div>
+  )
+}
+
+/**
+ * Teaching materials. The way into them on phones, where Materials is not in
+ * the tab bar. Hidden while the subscription is locked, like the timetable.
+ */
+function MaterialsCard() {
+  const locked = useSubscription()?.status === 'overdue'
+  const summary = useMaterialSummary(!locked)
+  if (locked || !summary.data) return null
+
+  const fresh = summary.data.new_for_my_grades
+  const total = summary.data.levels.reduce((sum, level) => sum + level.count, 0)
+  if (total === 0) return null
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <LibraryIcon className="size-4" /> Teaching materials
+        </CardTitle>
+        <CardDescription>
+          {fresh > 0 ? `${fresh} new ${fresh === 1 ? 'material' : 'materials'} for your grades this week` : `${total} ${total === 1 ? 'file' : 'files'} shared by your school`}
+        </CardDescription>
+      </CardHeader>
+      <CardFooter>
+        <Button asChild size="sm" variant={fresh > 0 ? 'default' : 'outline'}>
+          <Link to="/materials">
+            Open materials <ArrowRightIcon />
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

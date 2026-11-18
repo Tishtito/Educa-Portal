@@ -85,7 +85,7 @@ export function AppShell() {
           <Outlet />
         </main>
 
-        <BottomNav items={items} className="lg:hidden" />
+        <BottomNav items={items.filter((item) => item.phone !== false)} className="lg:hidden" />
       </div>
     </div>
   )

@@ -49,7 +49,7 @@ export const router = createBrowserRouter([
                   },
                 ],
               },
-              // Marking, mark lists, report cards and the timetable lock while the school's subscription has lapsed.
+              // Marking, mark lists, report cards, the timetable and teaching materials lock while the school's subscription has lapsed.
               {
                 element: <SubscriptionLockedRoutes />,
                 children: [
@@ -63,6 +63,10 @@ export const router = createBrowserRouter([
                       { path: '/marking', ...page(() => import('@/features/marking/MarkingPage'), 'MarkingPage') },
                       { path: '/marking/:examId/:classId/:levelSubjectId', ...page(() => import('@/features/marking/MarksheetPage'), 'MarksheetPage') },
                     ],
+                  },
+                  {
+                    element: <RequirePermission permission="view_teaching_materials" />,
+                    children: [{ path: '/materials', ...page(() => import('@/features/materials/MaterialsPage'), 'MaterialsPage') }],
                   },
                   {
                     element: <RequirePermission permission="view_marklists" />,
